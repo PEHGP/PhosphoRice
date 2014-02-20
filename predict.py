@@ -9,6 +9,7 @@ class PhosphoRice:
 		self.SeqName=SeqName
 		self.SeqFile=SeqFile
 	def NetPhosk(self,threshold,method="--no-ess"):#At most 10 sequences and 10,000 amino acids per submission; each sequence not less than 15 and not more than 4,000 amino acids.threshold:0.00-0.95,step=0.05
+		r=[]
 		if self.SeqFile:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhosK-1.0/NetPhosK.cf","SEQSUB":open(self.SeqFile,"rb"),"method":method,"threshold":threshold}
 		else:
@@ -33,10 +34,13 @@ class PhosphoRice:
 				x=x.rstrip()
 				m=re.search("[STY]-(\d+)\s+(\w+)\s+(.*)",x)#group(1):position,group(2):kinase,group(3):score
 				if m:
+					r.append(m.group(1))
 					print m.group(1),m.group(2),m.group(3)
 		else:
 			print "netphosk can't calculate results."
+		return r
 	def NetPhosk2(self,):#At most 50 sequences and 200,000 amino acids per submission; each sequence not more than 4,000 amino acids.
+		r=[]
 		if self.SeqFile:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhos-2.0/NetPhos.cf","SEQSUB":open(self.SeqFile,"rb"),"Tyrosine":"ps","Serine":"ps","Threonine":"ps"}
 		else:
@@ -65,8 +69,10 @@ class PhosphoRice:
 					b=m.group(2)#score
 					c=m.group(3)#S|T|Y
 					print a,b,c
+					r.append(a)
 		else:
 			print "netphosk2 can't calculate results."
+		return r
 	def Kinsephos2(self,speci):#spec 1:Default,2:80%,3:90%,4:100%
 		r=[]
 		param=[("probability_b",speci),("S_KINASE_COM[]","S_AKT1"),("S_KINASE_COM[]","S_DNA-PK"),("S_KINASE_COM[]","S_PKA"),("S_KINASE_COM[]","S_AMPK"),("S_KINASE_COM[]","S_GRK"),("S_KINASE_COM[]","S_PKB"),("S_KINASE_COM[]","S_ATM"),("S_KINASE_COM[]","S_GSK-3"),("S_KINASE_COM[]","S_PKC"),("S_KINASE_COM[]","S_Aurora"),("S_KINASE_COM[]","S_IKK"),("S_KINASE_COM[]","S_PKG"),("S_KINASE_COM[]","S_CaM"),("S_KINASE_COM[]","S_IPL1"),("S_KINASE_COM[]","S_PLK1"),("S_KINASE_COM[]","S_CDC2"),("S_KINASE_COM[]","S_MAPK"),("S_KINASE_COM[]","S_RSK"),("S_KINASE_COM[]","S_CDK"),("S_KINASE_COM[]","S_MAPKAPK2"),("S_KINASE_COM[]","S_STK4"),("S_KINASE_COM[]","S_CHK1"),("S_KINASE_COM[]","S_PAK1"),("S_KINASE_COM[]","S_CHK2"),("S_KINASE_COM[]","S_PAK2"),("S_KINASE_COM[]","S_CK1"),("S_KINASE_COM[]","S_PDK"),("S_KINASE_COM[]","S_CK2"),("S_KINASE_COM[]","S_PHK"),("T_KINASE_COM[]","T_CaM"),("T_KINASE_COM[]","T_GRK"),("T_KINASE_COM[]","T_PKB"),("T_KINASE_COM[]","T_CDC2"),("T_KINASE_COM[]","T_GSK-3"),("T_KINASE_COM[]","T_PKC"),("T_KINASE_COM[]","T_CDK"),("T_KINASE_COM[]","T_LKB1"),("T_KINASE_COM[]","T_PLK1"),("T_KINASE_COM[]","T_CK1"),("T_KINASE_COM[]","T_MAPK"),("T_KINASE_COM[]","T_ROCK"),("T_KINASE_COM[]","T_CK2"),("T_KINASE_COM[]","T_PDK"),("T_KINASE_COM[]","T_DAPK"),("T_KINASE_COM[]","T_PKA"),("Y_KINASE_COM[]","Y_Abl"),("Y_KINASE_COM[]","Y_Fgr"),("Y_KINASE_COM[]","Y_MET"),("Y_KINASE_COM[]","Y_ALK"),("Y_KINASE_COM[]","Y_Fyn"),("Y_KINASE_COM[]","Y_PDGFR"),("Y_KINASE_COM[]","Y_BTK"),("Y_KINASE_COM[]","Y_Hck"),("Y_KINASE_COM[]","Y_Ret"),("Y_KINASE_COM[]","Y_CSK"),("Y_KINASE_COM[]","Y_IGF1R"),("Y_KINASE_COM[]","Y_Src"),("Y_KINASE_COM[]","Y_EGFR"),("Y_KINASE_COM[]","Y_INSR"),("Y_KINASE_COM[]","Y_Syk"),("Y_KINASE_COM[]","Y_EPH"),("Y_KINASE_COM[]","Y_IR"),("Y_KINASE_COM[]","Y_TRK"),("Y_KINASE_COM[]","Y_FAK"),("Y_KINASE_COM[]","Y_JAK2"),("Y_KINASE_COM[]","Y_TYK2"),("Y_KINASE_COM[]","Y_Fes"),("Y_KINASE_COM[]","Y_Lck"),("Y_KINASE_COM[]","Y_ZAP70"),("Y_KINASE_COM[]","Y_FGFR1"),("Y_KINASE_COM[]","Y_Lyn"),("submit","Submit")]
@@ -85,7 +91,8 @@ class PhosphoRice:
 				print m.group(1)
 				r.append(m.group(1))
 		if not r:
-			print "kinsephos2 has no results." 
+			print "kinsephos2 has no results."
+		return r
 	def Kinsephos(self,speci,kinase="PKC,PKA,CKII,CaM-II,PKG,CKI,cdc2,MAPK,EGFR,Src,INSR,CDK,ATM,IKK,PKB,Abl,Syk,Jak,Other_MDD"):#speci 100:100%,95:95%,90:90% kinase PKC,PKA,PKB,CKII,CDK,Cam-II,PKG,CKI,cdc2,ATM,IKK,MAPK,Jak,Abl,Syk,EGFR,Src,INSR
 		r=[]
 		param=[("TYPE[]","S"),("TYPE[]","T"),("TYPE[]","Y"),("KINASE",kinase),("filter_type","Sp"),("Sp_value",speci)]
@@ -103,6 +110,7 @@ class PhosphoRice:
 				r.append(m.group(1))
 		if not r:
 			print "Kinsephos has no results."
+		return 
 	def Disphos(self,org,genome="",func=""):#org 0:Default Predictor,1:Eukaryotes,2:Viruses,3:Bacteria,4:Archaea; genome 0:H.sapiens,1:M.musculus,2:R.norvegicus,3:C.elegans,4:S.cerevisiae,5:D.melanogaster,6:A.thaliana; func 0:regulation,1:cancer,2:cytoskeleton,3:membrane,4:ribosomal,5:inhibitors,6:transport,7:kinases,8:degradation,9:biosynthesis,10:metabolism,11:GPCRs
 		r=[]
 		param=[("org",org)]
@@ -120,10 +128,14 @@ class PhosphoRice:
 		for x in l:
 			m=re.search('<tr><td>(\d+)</td><td>(\w+)</td><td>(.*?)</td><td><span class=\"seq\">\w+<span class=\"\w+\">\w+</span>\w+</span></td><td><span cls=\"yes\">(YES)</span></td></tr>',x)
 			if m:
-				a=m.group(1)
-				b=m.group(2)
-				c=m.group(3)
+				a=m.group(1)#position
+				b=m.group(2)#S/T/Y
+				c=m.group(3)#score
 				print a,b,c
+				r.append(a)
+		if not r:
+			print "Disphos has no results."
+		return r
 	def ScanSite(self,):
 		pass
 if __name__=="__main__":
