@@ -1,14 +1,15 @@
 #!/usr/bin/python
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
-import urllib2,time,re
+import urllib2,time,re,sys
 class PhosphoRice:
 	def __init__(self,SeqName="",Seq="",SeqFile=""):
 		register_openers()#important
-		self.Seq=seq
+		self.Seq=Seq
 		self.SeqName=SeqName
 		self.SeqFile=SeqFile
-	def NetPhosk(self,threshold,method="--no-ess"):#At most 10 sequences and 10,000 amino acids per submission; each sequence not less than 15 and not more than 4,000 amino acids.threshold:0.00-0.95,step=0.05
+		self.proname=sys.argv[0]
+	def NetPhosk(self,threshold,method="--no-ess"):#At most 10 sequences and 10,000 amino acids per submission; each sequence not less than 15 and not more than 4,000 amino acids.threshold:0.00-0.95,step=0.05;metho:--no-ess:Prediction without filtering (fast),--ess:rediction with ESS(Evolutionary Stable Sites) Filter (very slow),--cgi:Kinase Landscapes (Graphics)
 		r=[]
 		if self.SeqFile:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhosK-1.0/NetPhosK.cf","SEQSUB":open(self.SeqFile,"rb"),"method":method,"threshold":threshold}
@@ -18,7 +19,8 @@ class PhosphoRice:
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
 		l=urllib2.urlopen(request).readlines()
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
-		print u
+		if self.proname=="predict.py" or "test" in self.proname:
+			print u
 		c=urllib2.urlopen(u).readlines()
 		flag=1
 		t=0
@@ -35,7 +37,8 @@ class PhosphoRice:
 				m=re.search("[STY]-(\d+)\s+(\w+)\s+(.*)",x)#group(1):position,group(2):kinase,group(3):score
 				if m:
 					r.append(m.group(1))
-					print m.group(1),m.group(2),m.group(3)
+					if self.proname=="predict.py" or "test" in self.proname:
+						print m.group(1),m.group(2),m.group(3)
 		else:
 			print "netphosk can't calculate results."
 		return r
@@ -49,7 +52,8 @@ class PhosphoRice:
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
 		l=urllib2.urlopen(request).readlines()
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
-		print u
+		if self.proname=="predict.py" or "test" in self.proname:	
+			print u
 		c=urllib2.urlopen(u).readlines()
 		flag=1
 		t=0
@@ -68,7 +72,8 @@ class PhosphoRice:
 					a=m.group(1)#position
 					b=m.group(2)#score
 					c=m.group(3)#S|T|Y
-					print a,b,c
+					if self.proname=="predict.py" or "test" in self.proname:
+						print a,b,c
 					r.append(a)
 		else:
 			print "netphosk2 can't calculate results."
@@ -88,7 +93,8 @@ class PhosphoRice:
 			x=x.rstrip()
 			m=re.search('<font color=\"\#999999\" face=\"Courier New, Courier, mono\" size=\"2\">(\d+)</font>',x)
 			if m:
-				print m.group(1)
+				if self.proname=="predict.py" or "test" in self.proname:
+					print m.group(1)
 				r.append(m.group(1))
 		if not r:
 			print "kinsephos2 has no results."
@@ -110,7 +116,7 @@ class PhosphoRice:
 				r.append(m.group(1))
 		if not r:
 			print "Kinsephos has no results."
-		return 
+		return r
 	def Disphos(self,org,genome="",func=""):#org 0:Default Predictor,1:Eukaryotes,2:Viruses,3:Bacteria,4:Archaea; genome 0:H.sapiens,1:M.musculus,2:R.norvegicus,3:C.elegans,4:S.cerevisiae,5:D.melanogaster,6:A.thaliana; func 0:regulation,1:cancer,2:cytoskeleton,3:membrane,4:ribosomal,5:inhibitors,6:transport,7:kinases,8:degradation,9:biosynthesis,10:metabolism,11:GPCRs
 		r=[]
 		param=[("org",org)]
@@ -131,7 +137,8 @@ class PhosphoRice:
 				a=m.group(1)#position
 				b=m.group(2)#S/T/Y
 				c=m.group(3)#score
-				print a,b,c
+				if self.proname=="predict.py" or "test" in self.proname:
+					print a,b,c
 				r.append(a)
 		if not r:
 			print "Disphos has no results."
@@ -142,4 +149,4 @@ if __name__=="__main__":
 	seq="MSTWQLFPDSSGDGFRWEVAGRILQSVSDSTPTKALESTAPLPSMADLLLQGCSKLIAREEAMPGEIPMFRTGLGKSVVLKESSIAKAKSILAEKVTYSDLRNTNCSIPQMRQVDTAETLPMFRTASGKSVPLKESSIAKAMSILGSDKIIDSDNVLPRESGFGVSNSLFQTASNKKVNVSSAGLARAKALLGLEEDDLNGFNHVNQSSSSSQQHGWSGLKTHEEFDATVVKHHSGTPGQYEDYVSGKRSEVLNPSLKVPPTKFQTAGGKSLSVSAEALKRARNLLGDPELGSFFDDVAGGDQFFTPEKDERLSDIAINNGSANRGYIAHEEKTSNKHTPNSFVSPLWSSSKQFSSVNLENLASGGNLIKKFDAAVDETDCALNATHGLSNNRSLASDMAVNNSKVNGFIPRGRQPGRPADQPLVDITNRRDTAYAYNKQDSTQKKRLGKTVSVSPFKRPRISSFKTPSKKHALQASSGLSVVSCDTLTSKKVLSTRYPEKSPRVYIKDFFGMHPTATTRMDYVPDHVRRIKSSNADKYVFCDESSSNKVGAETFLQMLAESEKVCDRSFEACMWIVWKLACYDIYYPAKCRGNFLTITNVLEELKYRYEREVNHGHCSAIKRILSGDAPASSMMVLCISAINPKTDNDSQEAHCSDSCSNVKVELTDGWYSMNAALDVVLTKQLNAGKLFVGQKLRILGAGLSGWATPTSPLEAVISSTICLLLNINGTYRAHWADRLGFCKEIGVPLALNCIKCNGGPVPKTLAGIKRIYPILYKERLGEKKSIVRSERIESRIIQLHNQRRSALVEGIMCEYQRGINGVHSQNDTDSEEGAKIFKLLETAAEPEFLMAEMSPEQLRSFTTYKAKFEAAQQMRKEKSVAETLEDAGLGERNVTPFMRIRLVGLTSLSYEGEHNPKEGIVTIWDPTERQRTELTEGKIYMMKGLVPINSDSEILYLHARGSSSRWQPLSPKDSENFQPFFNPRKPISLSNLGEIPLSSEFDIAAYVVYVGNAYTDVLQKKQWVFVTDGSAQHSGEISNSLLAISFSTSFMDDSSVSHISHNLVGSVVGFCNLIKRAKDVTNEIWVAEAAENSVYFINAEAAYSSHLKTSSAHIQTWAKLSSSKSVRSRRLPLSIIIRVLSIIGACPSGLNSPDKCRAFNFFWSHSTLKLPHTAFQNRAMRVADKPP"
 	name="kuan"
 	p=PhosphoRice(SeqName=name,Seq=seq)
-	p.Disphos("0")
+	p.Kinsephos(90)
