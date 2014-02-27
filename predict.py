@@ -10,7 +10,7 @@ class PhosphoRice:
 		self.SeqFile=SeqFile
 		self.proname=sys.argv[0]
 	def NetPhosk(self,threshold,method="--no-ess"):#At most 10 sequences and 10,000 amino acids per submission; each sequence not less than 15 and not more than 4,000 amino acids.threshold:0.00-0.95,step=0.05;metho:--no-ess:Prediction without filtering (fast),--ess:rediction with ESS(Evolutionary Stable Sites) Filter (very slow),--cgi:Kinase Landscapes (Graphics)
-		r=[]
+		r={}
 		if self.SeqFile:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhosK-1.0/NetPhosK.cf","SEQSUB":open(self.SeqFile,"rb"),"method":method,"threshold":threshold}
 		else:
@@ -34,16 +34,21 @@ class PhosphoRice:
 		if t<=50:
 			for x in c:
 				x=x.rstrip()
+				mm=re.search("Query:\s+(.*)",x)
+				if mm:
+					p=mm.group(1)
+					r[p]=[]
+					continue
 				m=re.search("[STY]-(\d+)\s+(\w+)\s+(.*)",x)#group(1):position,group(2):kinase,group(3):score
 				if m:
-					r.append(m.group(1))
+					r[p].append(m.group(1))
 					if self.proname=="predict.py" or "test" in self.proname:
 						print m.group(1),m.group(2),m.group(3)
 		else:
 			print "netphosk can't calculate results."
 		return r
 	def NetPhosk2(self,):#At most 50 sequences and 200,000 amino acids per submission; each sequence not more than 4,000 amino acids.
-		r=[]
+		r={}
 		if self.SeqFile:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhos-2.0/NetPhos.cf","SEQSUB":open(self.SeqFile,"rb"),"Tyrosine":"ps","Serine":"ps","Threonine":"ps"}
 		else:
@@ -67,19 +72,23 @@ class PhosphoRice:
 		if t<=50:
 			for x in c:
 				x=x.rstrip()
-				m=re.search("^.*?\s+(\d+)\s+.*?\s+(.*?)\s+(\*[STY]\*)",x)
+				m=re.search("^(.*?)\s+(\d+)\s+.*?\s+(.*?)\s+(\*[STY]\*)",x)
 				if m:
-					a=m.group(1)#position
-					b=m.group(2)#score
-					c=m.group(3)#S|T|Y
+					a=m.group(1)#name
+					b=m.group(2)#position
+					c=m.group(3)#score
+					d=m.group(4)#S|T|Y
 					if self.proname=="predict.py" or "test" in self.proname:
-						print a,b,c
-					r.append(a)
+						print a,b,c,d
+					if not a in r:
+						r[a]=[b]
+					else:
+						r[a].append(b)
 		else:
 			print "netphosk2 can't calculate results."
 		return r
 	def Kinsephos2(self,speci):#spec 1:Default,2:80%,3:90%,4:100%
-		r=[]
+		r={}
 		param=[("probability_b",speci),("S_KINASE_COM[]","S_AKT1"),("S_KINASE_COM[]","S_DNA-PK"),("S_KINASE_COM[]","S_PKA"),("S_KINASE_COM[]","S_AMPK"),("S_KINASE_COM[]","S_GRK"),("S_KINASE_COM[]","S_PKB"),("S_KINASE_COM[]","S_ATM"),("S_KINASE_COM[]","S_GSK-3"),("S_KINASE_COM[]","S_PKC"),("S_KINASE_COM[]","S_Aurora"),("S_KINASE_COM[]","S_IKK"),("S_KINASE_COM[]","S_PKG"),("S_KINASE_COM[]","S_CaM"),("S_KINASE_COM[]","S_IPL1"),("S_KINASE_COM[]","S_PLK1"),("S_KINASE_COM[]","S_CDC2"),("S_KINASE_COM[]","S_MAPK"),("S_KINASE_COM[]","S_RSK"),("S_KINASE_COM[]","S_CDK"),("S_KINASE_COM[]","S_MAPKAPK2"),("S_KINASE_COM[]","S_STK4"),("S_KINASE_COM[]","S_CHK1"),("S_KINASE_COM[]","S_PAK1"),("S_KINASE_COM[]","S_CHK2"),("S_KINASE_COM[]","S_PAK2"),("S_KINASE_COM[]","S_CK1"),("S_KINASE_COM[]","S_PDK"),("S_KINASE_COM[]","S_CK2"),("S_KINASE_COM[]","S_PHK"),("T_KINASE_COM[]","T_CaM"),("T_KINASE_COM[]","T_GRK"),("T_KINASE_COM[]","T_PKB"),("T_KINASE_COM[]","T_CDC2"),("T_KINASE_COM[]","T_GSK-3"),("T_KINASE_COM[]","T_PKC"),("T_KINASE_COM[]","T_CDK"),("T_KINASE_COM[]","T_LKB1"),("T_KINASE_COM[]","T_PLK1"),("T_KINASE_COM[]","T_CK1"),("T_KINASE_COM[]","T_MAPK"),("T_KINASE_COM[]","T_ROCK"),("T_KINASE_COM[]","T_CK2"),("T_KINASE_COM[]","T_PDK"),("T_KINASE_COM[]","T_DAPK"),("T_KINASE_COM[]","T_PKA"),("Y_KINASE_COM[]","Y_Abl"),("Y_KINASE_COM[]","Y_Fgr"),("Y_KINASE_COM[]","Y_MET"),("Y_KINASE_COM[]","Y_ALK"),("Y_KINASE_COM[]","Y_Fyn"),("Y_KINASE_COM[]","Y_PDGFR"),("Y_KINASE_COM[]","Y_BTK"),("Y_KINASE_COM[]","Y_Hck"),("Y_KINASE_COM[]","Y_Ret"),("Y_KINASE_COM[]","Y_CSK"),("Y_KINASE_COM[]","Y_IGF1R"),("Y_KINASE_COM[]","Y_Src"),("Y_KINASE_COM[]","Y_EGFR"),("Y_KINASE_COM[]","Y_INSR"),("Y_KINASE_COM[]","Y_Syk"),("Y_KINASE_COM[]","Y_EPH"),("Y_KINASE_COM[]","Y_IR"),("Y_KINASE_COM[]","Y_TRK"),("Y_KINASE_COM[]","Y_FAK"),("Y_KINASE_COM[]","Y_JAK2"),("Y_KINASE_COM[]","Y_TYK2"),("Y_KINASE_COM[]","Y_Fes"),("Y_KINASE_COM[]","Y_Lck"),("Y_KINASE_COM[]","Y_ZAP70"),("Y_KINASE_COM[]","Y_FGFR1"),("Y_KINASE_COM[]","Y_Lyn"),("submit","Submit")]
 		if self.SeqFile:
 			param.append(("SEQFILE",open(self.SeqFile,"rb")))
@@ -91,16 +100,21 @@ class PhosphoRice:
 		#print l
 		for x in l:
 			x=x.rstrip()
+			mm=re.search("<a name=\'(.*?)\'",x)
+			if mm:
+				p=mm.group(1)
+				r[p]=[]
+				continue
 			m=re.search('<font color=\"\#999999\" face=\"Courier New, Courier, mono\" size=\"2\">(\d+)</font>',x)
 			if m:
 				if self.proname=="predict.py" or "test" in self.proname:
 					print m.group(1)
-				r.append(m.group(1))
+				r[p].append(m.group(1))
 		if not r:
 			print "kinsephos2 has no results."
 		return r
 	def Kinsephos(self,speci,kinase="PKC,PKA,CKII,CaM-II,PKG,CKI,cdc2,MAPK,EGFR,Src,INSR,CDK,ATM,IKK,PKB,Abl,Syk,Jak,Other_MDD"):#speci 100:100%,95:95%,90:90% kinase PKC,PKA,PKB,CKII,CDK,Cam-II,PKG,CKI,cdc2,ATM,IKK,MAPK,Jak,Abl,Syk,EGFR,Src,INSR
-		r=[]
+		r={}
 		param=[("TYPE[]","S"),("TYPE[]","T"),("TYPE[]","Y"),("KINASE",kinase),("filter_type","Sp"),("Sp_value",speci)]
 		if self.SeqFile:
 			param.append(("SEQFILE",open(self.SeqFile,"rb")))
@@ -111,9 +125,14 @@ class PhosphoRice:
 		l=urllib2.urlopen(request).readlines()
 		for x in l:
 			x=x.rstrip()
+			mm=re.search("<a name=\'(.*?)\'",x)
+			if mm:
+				p=mm.group(1)
+				r[p]=[]
+				continue
 			m=re.search('<font color=\"\#999999\" face=\"Courier New, Courier, mono\" size=\"2\">(\d+)</font>',x)
 			if m:
-				r.append(m.group(1))
+				r[p].append(m.group(1))
 		if not r:
 			print "Kinsephos has no results."
 		return r
@@ -132,7 +151,8 @@ class PhosphoRice:
 		request = urllib2.Request("http://www.dabi.temple.edu/disphos/pred/predict", datagen, headers)
 		l=urllib2.urlopen(request).readlines()
 		for x in l:
-			m=re.search('<tr><td>(\d+)</td><td>(\w+)</td><td>(.*?)</td><td><span class=\"seq\">\w+<span class=\"\w+\">\w+</span>\w+</span></td><td><span cls=\"yes\">(YES)</span></td></tr>',x)
+			#print x
+			m=re.search('<tr><td>(\d+?)</td><td>(.*?)</td><td>(.*?)</td><td><span class=\"seq\">.*?<span class=\".*?\">.*?</span>.*?</span></td><td><span cls=\"yes\">(YES)</span>',x)
 			if m:
 				a=m.group(1)#position
 				b=m.group(2)#S/T/Y
@@ -146,7 +166,10 @@ class PhosphoRice:
 	def ScanSite(self,):
 		pass
 if __name__=="__main__":
-	seq="MSTWQLFPDSSGDGFRWEVAGRILQSVSDSTPTKALESTAPLPSMADLLLQGCSKLIAREEAMPGEIPMFRTGLGKSVVLKESSIAKAKSILAEKVTYSDLRNTNCSIPQMRQVDTAETLPMFRTASGKSVPLKESSIAKAMSILGSDKIIDSDNVLPRESGFGVSNSLFQTASNKKVNVSSAGLARAKALLGLEEDDLNGFNHVNQSSSSSQQHGWSGLKTHEEFDATVVKHHSGTPGQYEDYVSGKRSEVLNPSLKVPPTKFQTAGGKSLSVSAEALKRARNLLGDPELGSFFDDVAGGDQFFTPEKDERLSDIAINNGSANRGYIAHEEKTSNKHTPNSFVSPLWSSSKQFSSVNLENLASGGNLIKKFDAAVDETDCALNATHGLSNNRSLASDMAVNNSKVNGFIPRGRQPGRPADQPLVDITNRRDTAYAYNKQDSTQKKRLGKTVSVSPFKRPRISSFKTPSKKHALQASSGLSVVSCDTLTSKKVLSTRYPEKSPRVYIKDFFGMHPTATTRMDYVPDHVRRIKSSNADKYVFCDESSSNKVGAETFLQMLAESEKVCDRSFEACMWIVWKLACYDIYYPAKCRGNFLTITNVLEELKYRYEREVNHGHCSAIKRILSGDAPASSMMVLCISAINPKTDNDSQEAHCSDSCSNVKVELTDGWYSMNAALDVVLTKQLNAGKLFVGQKLRILGAGLSGWATPTSPLEAVISSTICLLLNINGTYRAHWADRLGFCKEIGVPLALNCIKCNGGPVPKTLAGIKRIYPILYKERLGEKKSIVRSERIESRIIQLHNQRRSALVEGIMCEYQRGINGVHSQNDTDSEEGAKIFKLLETAAEPEFLMAEMSPEQLRSFTTYKAKFEAAQQMRKEKSVAETLEDAGLGERNVTPFMRIRLVGLTSLSYEGEHNPKEGIVTIWDPTERQRTELTEGKIYMMKGLVPINSDSEILYLHARGSSSRWQPLSPKDSENFQPFFNPRKPISLSNLGEIPLSSEFDIAAYVVYVGNAYTDVLQKKQWVFVTDGSAQHSGEISNSLLAISFSTSFMDDSSVSHISHNLVGSVVGFCNLIKRAKDVTNEIWVAEAAENSVYFINAEAAYSSHLKTSSAHIQTWAKLSSSKSVRSRRLPLSIIIRVLSIIGACPSGLNSPDKCRAFNFFWSHSTLKLPHTAFQNRAMRVADKPP"
+	seq="MGSGPRGALSLLLLLLAPPSRPAAGCPAPCSCAGTLVDCGRRGLTWASLPTAFPVDTTELVLTGNNLTALPPGLLDALPALRTAHLGANPWRCDCRLVPLRAWLAGRPERAPYRDLRCVAPPALRGRLLPYLAEDELRAACAPGPLCWGALAAQLALLGLGLLHALLLVLLLCRLRRLRARARARAAARLSLTDPLVAERAGTDES"
 	name="kuan"
 	p=PhosphoRice(SeqName=name,Seq=seq)
-	p.Kinsephos(90)
+	#r=p.NetPhosk(0.5)
+	#p.Kinsephos(90)
+	r=p.Disphos(1,genome=6)
+	print r
