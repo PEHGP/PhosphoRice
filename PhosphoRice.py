@@ -91,7 +91,6 @@ if __name__=="__main__":
 				da[p]=d.copy()
 	fr=open(Results,"w")
 	for p in da:
-		#print p
 		fr.write(p+"\n")
 		for s in da[p]:
 			score=da[p][s][1]+da[p][s][2]+da[p][s][3]*3+da[p][s][4]*3+da[p][s][5]+da[p][s][6]+da[p][s][7]+da[p][s][8]#calculate score
