@@ -11,7 +11,7 @@
 ```
 git clone git@github.com:PEHGP/PhosphoRice.git
 ```
-if you don't install git.You can download it [here](https://github.com/PEHGP/PhosphoRice/archive/master.zip).
+if you don't install git.You can download PhosphoRice [here](https://github.com/PEHGP/PhosphoRice/archive/master.zip).
 ###How to use   
 ```
 python PhosphoRice.py <InputFile> <OutputFile>
