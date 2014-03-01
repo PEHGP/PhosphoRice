@@ -39,13 +39,13 @@ if __name__=="__main__":
 		sys.exit(1)
 	else:
 		print "NetPhosk2 OK."
-	r3=p.Disphos(0)#id=3,w=3
+	r3=p.Disphos(0)#id=3,w=3 need change
 	if not r3:
 		print "Disphos(0) has no results."
 		sys.exit(1)
 	else:
 		print "Disphos(0) OK."
-	r4=p.Disphos(1,genome=6)#id=4,w=3
+	r4=p.Disphos(1,genome=6)#id=4,w=3 need change
 	if not r4:
 		print "Disphos(1,genome=6) has no results"
 		sys.exit(1)
@@ -76,19 +76,27 @@ if __name__=="__main__":
 	else:
 		print "Kinsephos2(2) OK."
 	r={1:r1,2:r2,3:r3,4:r4,5:r5,6:r6,7:r7,8:r8}
-	d={}
+	#need change
+	da={}
 	for i in range(1,9):
-		for p in r[i]:
-			if not p in d:
-				d[p]=[0,0,0,0,0,0,0,0,0]
-				d[p][i]=1
-			else:
-				d[p][i]=1
+		if i!=3 and i!=4: 
+			for p in r[i]:
+				d={}
+				for s in r[i][p]:
+					if not s in d:
+						d[s]=[0,0,0,0,0,0,0,0,0]
+						d[s][i]=1
+					else:
+						d[s][i]=1
+				da[p]=d.copy()
 	#print d
 	fr=open(Results,"w")
-	for p in d:
-		score=d[p][1]+d[p][2]+d[p][3]*3+d[p][4]*3+d[p][5]+d[p][6]+d[p][7]+d[p][8]#calculate score
-		if score>=6:
-			fr.write(p+"\t"+score+"\t"+seq[int(p)-1]+"\n")
+	for p in da:
+		print p
+		fr.write(p+"\n")
+		for s in da[p]:
+			score=da[p][s][1]+da[p][s][2]+da[p][s][3]*3+da[p][s][4]*3+da[p][s][5]+da[p][s][6]+da[p][s][7]+da[p][s][8]#calculate score
+			if score>=6:
+				fr.write(s+"\t"+str(score)+"\t"+seq[int(s)-1]+"\n")
 	fr.close()
 	print "Finish."

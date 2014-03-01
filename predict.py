@@ -17,7 +17,11 @@ class PhosphoRice:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhosK-1.0/NetPhosK.cf","SEQPASTE":">"+self.SeqName+"\n"+self.Seq,"method":method,"threshold":threshold}
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
-		l=urllib2.urlopen(request).readlines()
+		try:
+			l=urllib2.urlopen(request).readlines()
+		except urllib2.URLError:
+			print "\nNetPhosk web may be not work.\n"
+			sys.exit(1)
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
 		if self.proname=="predict.py" or "test" in self.proname:
 			print u
@@ -55,7 +59,11 @@ class PhosphoRice:
 			param={"configfile":"/usr/opt/www/pub/CBS/services/NetPhos-2.0/NetPhos.cf","SEQPASTE":">"+self.SeqName+"\n"+self.Seq,"Tyrosine":"ps","Serine":"ps","Threonine":"ps"}
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
-		l=urllib2.urlopen(request).readlines()
+		try:
+			l=urllib2.urlopen(request).readlines()
+		except urllib2.URLError:
+			print "\nNetPhosk2 web may be not work.\n"
+			sys.exit(1)
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
 		if self.proname=="predict.py" or "test" in self.proname:	
 			print u
@@ -96,7 +104,11 @@ class PhosphoRice:
 			param.append(("SEQ",">"+self.SeqName+"\n"+self.Seq))
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://kinasephos2.mbc.nctu.edu.tw/predict.php", datagen, headers)
-		l=urllib2.urlopen(request).readlines()
+		try:
+			l=urllib2.urlopen(request,timeout=300).readlines()
+		except urllib2.URLError:
+			print "\nKinsephos2 web may be not work.\n"
+			sys.exit(1)
 		#print l
 		for x in l:
 			x=x.rstrip()
@@ -122,7 +134,11 @@ class PhosphoRice:
 			param.append(("SEQ",">"+self.SeqName+"\n"+self.Seq))
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://kinasephos.mbc.nctu.edu.tw/predict.php", datagen, headers)
-		l=urllib2.urlopen(request).readlines()
+		try:
+			l=urllib2.urlopen(request,timeout=300).readlines()
+		except urllib2.URLError:
+			print "\nKinsephos web may be not work.\n"
+			sys.exit(1)
 		for x in l:
 			x=x.rstrip()
 			mm=re.search("<a name=\'(.*?)\'",x)
@@ -149,7 +165,11 @@ class PhosphoRice:
 			param.append(("seq",">"+self.SeqName+"\n"+self.Seq))
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://www.dabi.temple.edu/disphos/pred/predict", datagen, headers)
-		l=urllib2.urlopen(request).readlines()
+		try:
+			l=urllib2.urlopen(request,timeout=300).readlines()
+		except urllib2.URLError:
+			print "\nDisphos web may be not work.\n"
+			sys.exit(1)	
 		for x in l:
 			#print x
 			m=re.search('<tr><td>(\d+?)</td><td>(.*?)</td><td>(.*?)</td><td><span class=\"seq\">.*?<span class=\".*?\">.*?</span>.*?</span></td><td><span cls=\"yes\">(YES)</span>',x)
@@ -170,6 +190,7 @@ if __name__=="__main__":
 	name="kuan"
 	p=PhosphoRice(SeqName=name,Seq=seq)
 	#r=p.NetPhosk(0.5)
-	#p.Kinsephos(90)
+	#r=p.Kinsephos(90)
 	r=p.Disphos(1,genome=6)
+	#r=p.Kinsephos2(1)
 	print r
