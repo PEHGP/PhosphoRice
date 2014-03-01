@@ -6,9 +6,12 @@ PhosphoRice,a meta-predictor of rice-specific phosphorylation site, was construc
 ###Requires
 - [python](http://www.python.org/downloads/)>=2.6(not support python3.0)
 - python module:[poster](https://pypi.python.org/pypi/poster/0.4)
+
 ###Install
-	git clone git@github.com:PEHGP/PhosphoRice.git
-> if you don't install git.You can download it [here](https://github.com/PEHGP/PhosphoRice/archive/master.zip).
+```
+git clone git@github.com:PEHGP/PhosphoRice.git
+```
+if you don't install git.You can download it [here](https://github.com/PEHGP/PhosphoRice/archive/master.zip).
 ###How to use   
 ```
 python PhosphoRice.py <InputFile> <OutputFile>
@@ -26,9 +29,11 @@ RLLPYLAEDELRAACTDES
 ###Output File
  The firs line is sequence name.The result from the second line.  
  The result seems like below:
-	10\t6\tS  
-	23\t12\tT
-	45\t7\tY
+```
+10\t6\tS  
+23\t12\tT
+45\t7\tY
+```
 - The first column is the amino acid position.
 - The second column is the score.The higher the score is, the more possible the position is a phosphorylation site.
 - The third column is the phosphorylation amino acid.
