@@ -76,25 +76,32 @@ if __name__=="__main__":
 	else:
 		print "Kinsephos2(2) OK."
 	r={1:r1,2:r2,3:r3,4:r4,5:r5,6:r6,7:r7,8:r8}
-	#need change
-	da={}
+	#need change below
+	d={}
 	for i in range(1,9):
+		#print r[i]
 		if i!=3 and i!=4: 
-			for p in r[i]:
-				d={}
-				for s in r[i][p]:
-					if not s in d:
+			for s in list(set(r[i][name])):
+				#print s
+				if not s in d:
+					d[s]=[0,0,0,0,0,0,0,0,0]
+					d[s][i]=1
+				else:
+					d[s][i]=1
+		else:
+			for s in r[i]:
+				if not s in d:
 						d[s]=[0,0,0,0,0,0,0,0,0]
 						d[s][i]=1
-					else:
-						d[s][i]=1
-				da[p]=d.copy()
+				else:
+					d[s][i]=1
+	#print d
 	fr=open(Results,"w")
-	for p in da:
-		fr.write(p+"\n")
-		for s in da[p]:
-			score=da[p][s][1]+da[p][s][2]+da[p][s][3]*3+da[p][s][4]*3+da[p][s][5]+da[p][s][6]+da[p][s][7]+da[p][s][8]#calculate score
-			if score>=6:
-				fr.write(s+"\t"+str(score)+"\t"+seq[int(s)-1]+"\n")
+	fr.write(name+"\n")
+	for s in d:
+		score=d[s][1]+d[s][2]+d[s][3]*3+d[s][4]*3+d[s][5]+d[s][6]+d[s][7]+d[s][8]#calculate score
+		if score>=6:
+			fr.write(s+"\t"+str(score)+"\t"+seq[int(s)-1]+"\n")
+	#need change up
 	fr.close()
 	print "Finish."
