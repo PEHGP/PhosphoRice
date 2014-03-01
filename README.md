@@ -1,5 +1,5 @@
 #PhosphoRice
-PhosphoRice,a meta-predictor of rice-specific phosphorylation site, was constructed by integrating the newly phosphorylation sites predictors, NetPhos2.0, NetPhosK, Kinasephos, Scansite, Disphos and Predphosphos with parameters selected by restricted grid search and random search. It archieve an increase in MCC of 7.1%, and an increase in ACC of 4.6% than that of the best element predictor (Disphos_default), respectively.
+[PhosphoRice](http://www.plantmethods.com/content/8/1/5),a meta-predictor of rice-specific phosphorylation site, was constructed by integrating the newly phosphorylation sites predictors, NetPhos2.0, NetPhosK, Kinasephos, Scansite, Disphos and Predphosphos with parameters selected by restricted grid search and random search. It archieve an increase in MCC of 7.1%, and an increase in ACC of 4.6% than that of the best element predictor (Disphos_default), respectively.
  
 ***Attention:Because Scansite and Predphosphos have not been used for a long time. We have to choice another weight for our tool.***
 ##Get Started
@@ -30,9 +30,9 @@ RLLPYLAEDELRAACTDES
  The firs line is sequence name.The result from the second line.  
  The result seems like below:
 ```
-10\t6\tS  
-23\t12\tT
-45\t7\tY
+10	6	S  
+23	12	T
+45	7	Y
 ```
 - The first column is the amino acid position.
 - The second column is the score.The higher the score is, the more possible the position is a phosphorylation site.
