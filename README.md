@@ -17,7 +17,7 @@ if you don't install git.You can download it [here](https://github.com/PEHGP/Pho
 python PhosphoRice.py <InputFile> <OutputFile>
 ```
 ###Input File
-The input file must be protein sequence and format in FASTA.  
+The input file must be a protein sequence and format in FASTA.  
 A FASTA sequence seems like below:  
 ```
 >kuan  
@@ -28,8 +28,9 @@ RLLPYLAEDELRAACTDES
 ***Attention:Disphos can't update files now. So our programs only predict a sequence at a time.***
 ###Output File
  The firs line is sequence name.The result from the second line.  
- The result seems like below:
+ The output file seems like below:
 ```
+kuan
 10	6	S  
 23	12	T
 45	7	Y
