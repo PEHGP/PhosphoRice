@@ -32,6 +32,7 @@ RLLPYLAEDELRAACTDES
 - The first column is the amino acid position.
 - The second column is the score.The higher the score is, the more possible the position is a phosphorylation site.
 - The third column is the phosphorylation amino acid.
+
 ***Attention:Our programs rely on the third party web tools.If the third party web tools can't be used,our programs can not predict results.***
 ##How to cite
  Que S, Li K, Chen M, et al. PhosphoRice: a meta-predictor of rice-specific phosphorylation sites[J]. Plant methods, 2012, 8(1): 1-9.
