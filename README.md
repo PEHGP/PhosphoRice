@@ -4,6 +4,7 @@
 ##News
 - 04/05/2014:v1.1.0
 Add the Scansite.
+
 ##Get Started
 ###Requires
 - [python](http://www.python.org/downloads/)>=2.6(not support python3.0)
