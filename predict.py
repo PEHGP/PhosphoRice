@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2,time,re,sys
@@ -23,7 +23,7 @@ class PhosphoRice:
 			print "\nNetPhosk web may be not work.\n"
 			sys.exit(1)
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
-		if self.proname=="predict.py" or "test" in self.proname:
+		if "predict.py" in self.proname or "test" in self.proname:
 			print u
 		c=urllib2.urlopen(u).readlines()
 		flag=1
@@ -46,7 +46,7 @@ class PhosphoRice:
 				m=re.search("[STY]-(\d+)\s+(\w+)\s+(.*)",x)#group(1):position,group(2):kinase,group(3):score
 				if m:
 					r[p].append(m.group(1))
-					if self.proname=="predict.py" or "test" in self.proname:
+					if "predict.py" in self.proname or "test" in self.proname:
 						print m.group(1),m.group(2),m.group(3)
 		else:
 			print "netphosk can't calculate results."
@@ -65,7 +65,7 @@ class PhosphoRice:
 			print "\nNetPhosk2 web may be not work.\n"
 			sys.exit(1)
 		u="http://www.cbs.dtu.dk"+l[1].split(":")[1].rstrip().replace(" ","")
-		if self.proname=="predict.py" or "test" in self.proname:	
+		if "predict.py" in self.proname or "test" in self.proname:	
 			print u
 		c=urllib2.urlopen(u).readlines()
 		flag=1
@@ -86,7 +86,7 @@ class PhosphoRice:
 					b=m.group(2)#position
 					c=m.group(3)#score
 					d=m.group(4)#S|T|Y
-					if self.proname=="predict.py" or "test" in self.proname:
+					if "predict.py" in self.proname or "test" in self.proname:
 						print a,b,c,d
 					if not a in r:
 						r[a]=[b]
@@ -119,7 +119,7 @@ class PhosphoRice:
 				continue
 			m=re.search('<font color=\"\#999999\" face=\"Courier New, Courier, mono\" size=\"2\">(\d+)</font>',x)
 			if m:
-				if self.proname=="predict.py" or "test" in self.proname:
+				if "predict.py" in self.proname or "test" in self.proname:
 					print m.group(1)
 				r[p].append(m.group(1))
 		if not r:
@@ -177,20 +177,41 @@ class PhosphoRice:
 				a=m.group(1)#position
 				b=m.group(2)#S/T/Y
 				c=m.group(3)#score
-				if self.proname=="predict.py" or "test" in self.proname:
+				if "predict.py" in self.proname or "test" in self.proname:
 					print a,b,c
 				r.append(a)
 		if not r:
 			print "Disphos has no results."
 		return r
-	def ScanSite(self,):
-		pass
+	def ScanSite(self,stringency):#stringency:High,Medium,Low
+		r=[]
+		param=[("protein_id",self.SeqName),("sequence",self.Seq),("motif_option","all"),("stringency",stringency)]#need change
+		datagen, headers = multipart_encode(param)
+		request = urllib2.Request("http://scansite.mit.edu/cgi-bin/motifscan_seq", datagen, headers)
+		try:
+			l=urllib2.urlopen(request,timeout=300).readlines()
+		except urllib2.URLError:
+			print "\nScanSite web may be not work.\n"
+			sys.exit(1)
+		for x in l:
+			m=re.search("<tr><td>([STY])(\d+)</td><td><a href=.*?>(.*?)</a>",x)
+			if m:
+				a=m.group(1)#site
+				b=m.group(2)#position
+				c=m.group(3)#score
+				if "predict.py" in self.proname or "test" in self.proname:
+					print a,b,c
+				r.append(b)
+		if not r:
+			print "Scansite has no results."
+		return r
 if __name__=="__main__":
 	seq="MGSGPRGALSLLLLLLAPPSRPAAGCPAPCSCAGTLVDCGRRGLTWASLPTAFPVDTTELVLTGNNLTALPPGLLDALPALRTAHLGANPWRCDCRLVPLRAWLAGRPERAPYRDLRCVAPPALRGRLLPYLAEDELRAACAPGPLCWGALAAQLALLGLGLLHALLLVLLLCRLRRLRARARARAAARLSLTDPLVAERAGTDES"
 	name="kuan"
 	p=PhosphoRice(SeqName=name,Seq=seq)
 	#r=p.NetPhosk(0.5)
 	#r=p.Kinsephos(90)
-	r=p.Disphos(1,genome=6)
+	#r=p.Disphos(1,genome=6)
 	#r=p.Kinsephos2(1)
+	r=p.ScanSite("Low")
 	print r
