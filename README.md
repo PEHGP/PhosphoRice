@@ -2,9 +2,7 @@
 [PhosphoRice](http://www.plantmethods.com/content/8/1/5),a meta-predictor of rice-specific phosphorylation site, was constructed by integrating the newly phosphorylation sites predictors, NetPhos2.0, NetPhosK, Kinasephos, Scansite, Disphos and Predphosphos with parameters selected by restricted grid search and random search. It archieve an increase in MCC of 7.1%, and an increase in ACC of 4.6% than that of the best element predictor (Disphos_default), respectively.
  
 ##News
-- 04/05/2014:v1.1.0
-
-Add the Scansite.
+- 04/05/2014:v1.1.0   Add the Scansite.
 
 ##Get Started
 ###Requires
