@@ -3,6 +3,7 @@
  
 ##News
 - 04/05/2014:v1.1.0   Add the Scansite.
+- 10/28/2014:v1.1.1   check if result of one tool is empty.
 
 ##Get Started
 ###Requires
