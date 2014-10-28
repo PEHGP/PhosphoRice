@@ -57,8 +57,13 @@ if __name__=="__main__":
 	for i in range(1,12):
 		#print r[i]
 		if i!=3 and i!=4 and i!=9 and i!=10 and i!=11:
+			#print name
+			#print r[i]
 			if not name in r[i]:
-				ps=list(set(r[i][name.upper()]))
+				if r[i]:
+					ps=list(set(r[i][name.upper()]))
+				else:
+					ps=[]
 			else:
 				ps=list(set(r[i][name]))
 			for s in ps:
@@ -80,6 +85,7 @@ if __name__=="__main__":
 	fr.write(name+"\n")
 	for s in d:
 		score=d[s][1]*0+d[s][2]*1.23+d[s][3]*4.25+d[s][4]*1.65+d[s][5]*2.76+d[s][6]*0.79+d[s][7]*2.75+d[s][8]*0.71+d[s][9]*2.57+d[s][10]*3.90+d[s][11]*1.60#calculate score
+		#print score
 		if score>=11.47:
 			fr.write(s+"\t"+str(score)+"\t"+seq[int(s)-1]+"\n")
 	#need change up
