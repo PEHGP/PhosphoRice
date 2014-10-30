@@ -18,7 +18,7 @@ class PhosphoRice:
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
 		try:
-			l=urllib2.urlopen(request).readlines()
+			l=urllib2.urlopen(request,timeout=300).readlines()
 		except urllib2.URLError:
 			print "\nNetPhosk web may be not work.\n"
 			sys.exit(1)
@@ -60,7 +60,7 @@ class PhosphoRice:
 		datagen, headers = multipart_encode(param)
 		request = urllib2.Request("http://www.cbs.dtu.dk/cgi-bin/nph-webface", datagen, headers)
 		try:
-			l=urllib2.urlopen(request).readlines()
+			l=urllib2.urlopen(request,timeout=300).readlines()
 		except urllib2.URLError:
 			print "\nNetPhosk2 web may be not work.\n"
 			sys.exit(1)
